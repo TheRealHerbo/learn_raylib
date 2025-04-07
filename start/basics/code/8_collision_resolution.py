@@ -1,20 +1,31 @@
 from raylib import *
 from pyray import *
 
-init_window(1920, 1080, "Collision resolution")
+def collision(axis):
+    for block in blocks:
+        if check_collision_recs(block, player):
+            if axis == 'x':
+                if direction.x > 0: # the player is moving right
+                    player.x = block.x - player.width
+                if direction.x < 0: # move left
+                    player.x = block.x + block.width
+            else:
+                if direction.y > 0: # the player is moving down
+                    player.y = block.y - player.height
+                if direction.y < 0: # move up
+                    player.y = block.y + block.height
+
+init_window(1280, 720, "Collision resolution")
 
 level_map = [
-    '1111111111111111111',
-    '1010000000000000001',
-    '1010000000001111111',
-    '1000000000000000111',
-    '1000000200000000011',
-    '1000000000000100001',
-    '1000000000000100001',
-    '1001100000000100001',
-    '1001100000000100001',
-    '1001100000000100001',
-    '1111111111111111111'
+    '1111111111111111',
+    '1010000000000001',
+    '1010000000111111',
+    '1000000200000011',
+    '1001100000010001',
+    '1001100000010001',
+    '1001100000010001',
+    '1111111111111111'
 ]
 
 player = Rectangle(400,300,60,60)
@@ -39,7 +50,9 @@ while not window_should_close():
     # movement
     dt = get_frame_time()
     player.x += direction.x * speed * dt
+    collision('x')
     player.y += direction.y * speed * dt
+    collision('y')
 
     begin_drawing()    
     clear_background(BLACK)

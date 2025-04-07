@@ -2,7 +2,7 @@ from pyray import *
 from raylib import * 
 from random import randint, choice
 
-init_window(1920, 1080, "Camera")
+init_window(1280, 720, "Camera")
 
 # player
 pos = Vector2()
@@ -20,6 +20,13 @@ circles = [
     for i in range(100)
 ]
 
+# camera
+camera = Camera2D()
+camera.zoom = 0.7
+camera.offset = Vector2(1280/2,720/2)
+camera.rotation = 0
+
+
 while not window_should_close():
     
     # input
@@ -32,12 +39,23 @@ while not window_should_close():
     pos.x += direction.x * speed * dt
     pos.y += direction.y * speed * dt
 
+    # camera update
+    rotate_direction = int(is_key_down(KEY_A)) - int(is_key_down(KEY_S)) 
+    zoom_level = int(is_key_down(KEY_Q)) - int(is_key_down(KEY_W)) 
+    camera.target = pos
+    camera.target = pos
+    camera.rotation += rotate_direction * dt * 50
+    camera.zoom += zoom_level * dt * 1
+    camera.zoom = max(0.2, min(2, camera.zoom))
+
     # drawing
     begin_drawing()
+    begin_mode_2d(camera)
     clear_background(WHITE)
     for circle in circles:
         draw_circle_v(*circle)
     draw_circle_v(pos, radius, BLACK)
+    end_mode_2d()
     end_drawing()
 
 close_window()
